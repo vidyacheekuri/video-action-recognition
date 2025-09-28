@@ -2,7 +2,7 @@
 
 A deep learning project for video action recognition using PyTorch. This project implements both CNN+LSTM and R3D-18 architectures to classify human actions in video clips.
 
-## 🎯 Features
+## Features
 
 - **Multiple Model Architectures**: CNN+LSTM and R3D-18 (3D ResNet)
 - **Real-time Prediction**: Web interface for instant video analysis
@@ -10,7 +10,7 @@ A deep learning project for video action recognition using PyTorch. This project
 - **Comprehensive Training**: Full training pipeline with data augmentation
 - **Model Evaluation**: Detailed metrics and visualization tools
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -18,30 +18,7 @@ A deep learning project for video action recognition using PyTorch. This project
 - CUDA-capable GPU (recommended)
 - 8GB+ RAM
 
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd video-action-recognition
-   ```
-
-2. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Download the dataset**
-   - Download UCF-101 dataset and extract to `archive/` directory
-   - Or use your own video dataset with CSV labels
-
-4. **Run the web application**
-   ```bash
-   python app.py
-   ```
-   Open your browser and go to `http://localhost:5001`
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 video-action-recognition/
@@ -70,17 +47,7 @@ video-action-recognition/
         └── results.json        # Training results
 ```
 
-## 🏋️ Training
-
-### Basic Training
-
-Train a model with default settings:
-
-```bash
-python train.py --model r3d18 --epochs 50
-```
-
-### Advanced Training
+## Training
 
 ```bash
 python train.py \
@@ -108,32 +75,8 @@ python train.py \
 | `--patience` | `10` | Early stopping patience |
 | `--scheduler` | `plateau` | LR scheduler (`plateau`, `cosine`) |
 
-### Resume Training
 
-```bash
-python train.py --resume experiments/my_experiment/checkpoints/checkpoint_epoch_50.pth
-```
-
-## 🔮 Prediction
-
-### Web Interface
-
-1. Start the web server:
-   ```bash
-   python app.py
-   ```
-
-2. Open `http://localhost:5001` in your browser
-
-3. Upload a video file and click "Submit" to get predictions
-
-### Command Line
-
-```bash
-python predict_single_video.py --video path/to/video.mp4 --output results.json
-```
-
-## 📊 Model Architectures
+## Model Architectures
 
 ### R3D-18 (3D ResNet-18)
 - **Architecture**: 3D convolutional neural network
@@ -147,7 +90,7 @@ python predict_single_video.py --video path/to/video.mp4 --output results.json
 - **Advantages**: Explicit temporal modeling
 - **Use Case**: When temporal relationships are crucial
 
-## 📈 Performance
+## Performance
 
 | Model | Top-1 Accuracy | Top-5 Accuracy | Parameters |
 |-------|----------------|----------------|------------|
@@ -156,7 +99,7 @@ python predict_single_video.py --video path/to/video.mp4 --output results.json
 
 *Results on UCF-101 dataset (may vary based on training configuration)*
 
-## 🛠️ Development
+## Development
 
 ### Adding New Models
 
@@ -201,19 +144,14 @@ python predict_single_video.py --video path/to/video.mp4 --output results.json
 
 3. Update data paths in `train.py` and `data_loader.py`
 
-## 📋 Requirements
-
-### Hardware
-- **GPU**: NVIDIA GPU with 8GB+ VRAM (recommended)
-- **RAM**: 16GB+ system RAM
-- **Storage**: 50GB+ free space for dataset
+## Requirements
 
 ### Software
 - Python 3.8+
 - CUDA 11.0+ (for GPU training)
 - FFmpeg (for video processing)
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -232,31 +170,14 @@ python predict_single_video.py --video path/to/video.mp4 --output results.json
    - Use data augmentation
    - Try different learning rates
 
-### Getting Help
 
-- Check the logs in `experiments/` directory
-- Verify your dataset format
-- Ensure all dependencies are installed correctly
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📚 References
+## References
 
 - [UCF-101 Dataset](https://www.crcv.ucf.edu/data/UCF101.php)
 - [R3D: A Purely Convolutional Network for Video Classification](https://arxiv.org/abs/1711.11248)
 - [PyTorch Documentation](https://pytorch.org/docs/)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - UCF-101 dataset creators
 - PyTorch team
@@ -265,4 +186,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**Happy Training! 🎬🤖**
