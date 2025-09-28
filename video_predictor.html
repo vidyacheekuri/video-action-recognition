@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Action Recognition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #5E5DF0;
+            --primary-glow: rgba(94, 93, 240, 0.3);
+            --background-color: #F0F2F5;
+            --card-background: rgba(255, 255, 255, 0.65);
+            --card-border-color: rgba(255, 255, 255, 0.3);
+            --text-color: #0D1117;
+            --subtle-text-color: #57606a;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            background-image: radial-gradient(circle at 10% 10%, #dbeafe, transparent), radial-gradient(circle at 80% 90%, #ede9fe, transparent);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 960px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        header h1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-size: 2.25rem;
+            font-weight: 700;
+        }
+        header p {
+            margin-top: 0.5rem;
+            color: var(--subtle-text-color);
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr; 
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .card {
+            background: var(--card-background);
+            border: 1px solid var(--card-border-color);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--card-border-color);
+            font-weight: 600;
+        }
+        .card-body {
+            padding: 1.25rem;
+        }
+        
+        .upload-area {
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px dashed #CBD5E1;
+            transition: all 0.3s ease;
+            /* MODIFICATION: Removed fixed aspect-ratio to allow flexible height */
+            min-height: 250px; /* Give the placeholder a decent size */
+        }
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px 5px var(--primary-glow);
+        }
+        .upload-area.has-video {
+            border: none;
+            padding: 0;
+            min-height: 0; /* Let video define the height */
+            cursor: default;
+        }
+        .upload-area.has-video:hover { box-shadow: none; }
+        
+        .upload-placeholder-content { text-align: center; }
+        .upload-placeholder-content svg { color: var(--primary-color); }
+        .upload-placeholder-content h3 { font-size: 1.1rem; margin-top: 1rem; }
+        .upload-placeholder-content p { color: var(--subtle-text-color); }
+        
+        .video-preview video {
+            width: 100%;
+            /* MODIFICATION: Set a max-height to prevent vertical videos from being too tall */
+            max-height: 450px; 
+            display: block;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+        
+        .results-card .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .results-placeholder { text-align: center; color: var(--subtle-text-color); margin: auto; padding: 2rem 0; }
+        .results-placeholder svg { margin-bottom: 1rem; }
+        
+        .results-loading { text-align: center; color: var(--subtle-text-color); }
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .primary-prediction { text-align: center; }
+        .primary-prediction .action-label { font-size: 1rem; color: var(--subtle-text-color); }
+        .primary-prediction .action-name { font-size: 2.25rem; font-weight: 700; color: var(--primary-color); }
+        
+        .footer-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        .btn-secondary { background-color: var(--white); border: 1px solid #CBD5E1; color: var(--text-color); }
+        .btn-secondary:hover:not(:disabled) { background-color: #f8fafc; border-color: #94a3b8; }
+        .btn-primary { background-color: var(--primary-color); color: var(--white); }
+        .btn-primary:hover:not(:disabled) { background-color: #4338CA; transform: translateY(-2px); }
+        .btn:disabled { background-color: #E2E8F0; color: #94A3B8; cursor: not-allowed; }
+
+        .hidden { display: none; }
+        .error { background: #ffebee; color: #c62828; padding: 1rem; border-radius: 12px; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <main class="main-container">
+        <header>
+            <h1><span>🎬</span> Video Action Recognition</h1>
+            <p>Powered by a PyTorch CNN+LSTM model to instantly classify actions in video clips.</p>
+        </header>
+        <div class="content-grid">
+            <section class="card">
+                <div class="card-header">Video Input</div>
+                <div class="card-body">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-placeholder-content" id="uploadPlaceholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m16 16-4-4-4 4"></path></svg>
+                            <h3>Click or drag video here</h3>
+                            <p>MP4, AVI, MOV supported</p>
+                        </div>
+                        <div class="video-preview" id="videoPreview"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="card results-card" id="resultsCard">
+                <div class="card-header">Analysis Result</div>
+                <div class="card-body">
+                    <div class="results-placeholder" id="resultsPlaceholder">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path><path d="M19.5 12a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path></svg>
+                        <p>Prediction results will appear here.</p>
+                    </div>
+                    <div class="results-loading hidden" id="resultsLoading">
+                        <div class="spinner"></div>
+                        <p>Predicting video action...</p>
+                    </div>
+                    <div class="results-content hidden" id="resultsContent"></div>
+                </div>
+            </section>
+        </div>
+        <footer>
+            <div class="footer-actions">
+                <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                <button class="btn btn-primary" id="predictBtn" disabled>Submit</button>
+            </div>
+            <div class="error hidden" id="error"></div>
+        </footer>
+        <input type="file" id="fileInput" class="hidden" accept="video/*">
+    </main>
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const fileInput = document.getElementById('fileInput');
+        const predictBtn = document.getElementById('predictBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const videoPreview = document.getElementById('videoPreview');
+        const resultsPlaceholder = document.getElementById('resultsPlaceholder');
+        const resultsLoading = document.getElementById('resultsLoading');
+        const resultsContent = document.getElementById('resultsContent');
+        const errorDiv = document.getElementById('error');
+        let originalFilenameOnServer = null;
+
+        uploadArea.addEventListener('click', () => {
+            if (!uploadArea.classList.contains('has-video')) {
+                fileInput.click();
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => { if (e.target.files.length > 0) handleFileSelect(e.target.files[0]); });
+        clearBtn.addEventListener('click', clearState);
+        predictBtn.addEventListener('click', predictAction);
+        
+        function setResultsPanelState(state) {
+            resultsPlaceholder.classList.add('hidden');
+            resultsLoading.classList.add('hidden');
+            resultsContent.classList.add('hidden');
+            if (state === 'placeholder') resultsPlaceholder.classList.remove('hidden');
+            if (state === 'loading') resultsLoading.classList.remove('hidden');
+            if (state === 'content') resultsContent.classList.remove('hidden');
+        }
+
+        function clearState() {
+            originalFilenameOnServer = null;
+            fileInput.value = '';
+            videoPreview.innerHTML = '';
+            uploadPlaceholder.classList.remove('hidden');
+            uploadArea.classList.remove('has-video');
+            setResultsPanelState('placeholder');
+            predictBtn.disabled = true;
+            errorDiv.classList.add('hidden');
+        }
+
+        async function handleFileSelect(file) {
+            clearState();
+            uploadPlaceholder.classList.add('hidden');
+            uploadArea.classList.add('has-video');
+            await generateServerSidePreview(file);
+        }
+
+        async function generateServerSidePreview(file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                const response = await fetch('/generate_preview', { method: 'POST', body: formData });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Preview generation failed.');
+                
+                originalFilenameOnServer = result.original_filename;
+                videoPreview.innerHTML = `<video controls preload="metadata" poster="${result.poster_url}"><source src="${result.preview_url}" type="video/mp4"></video>`;
+                predictBtn.disabled = false;
+            } catch (err) {
+                showError(err.message);
+                clearState();
+            }
+        }
+
+        async function predictAction() {
+            if (!originalFilenameOnServer) return;
+            predictBtn.disabled = true;
+            clearBtn.disabled = true;
+            setResultsPanelState('loading');
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename: originalFilenameOnServer })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Prediction failed.');
+                displayResults(result);
+            } catch (err) {
+                showError(err.message);
+                setResultsPanelState('placeholder');
+            } finally {
+                predictBtn.disabled = false;
+                clearBtn.disabled = false;
+            }
+        }
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function displayResults(resultData) {
+            if (!resultData || !resultData.predictedAction) {
+                showError("Invalid prediction results received.");
+                setResultsPanelState('placeholder');
+                return;
+            }
+            resultsContent.innerHTML = `
+                <div class="primary-prediction">
+                    <div class="action-label">Predicted Action</div>
+                    <div class="action-name">${resultData.predictedAction}</div>
+                </div>
+            `;
+            setResultsPanelState('content');
+        }
+        
+        clearState();
+    </script>
+</body>
+</html>
